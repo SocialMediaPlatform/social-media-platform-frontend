@@ -2,12 +2,13 @@ import React from 'react';
 
 const MainFeed = () => {
     return (
-        <div className='box-border rounded-10px flex-col flex-grow p-4 bg-borderBoxGrey'>
-            <div className='border rounded-10px border-gray-300 p-30px mb-4'>
-                <p>Test post 1</p>
+        <div className='box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey'>
+            <div className='border-b border-borderGrey p-4'></div>
+            <div className='border-b border-borderGrey p-4'>
+                <p className='text-white'>Test post 1</p>
             </div>
-            <div className='border rounded-10px border-gray-300 p-30px mb-4'>
-                <p>Test post 2</p>
+            <div className='border-b border-borderGrey p-4'>
+                <p className='text-white'>Test post 2</p>
             </div>
         </div>
     );

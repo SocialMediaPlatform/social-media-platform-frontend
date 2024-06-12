@@ -15,7 +15,7 @@ const Header = () => {
         }
     }
     return (
-        <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
+        <header className="border-b bg-backgroundGrey border-borderGrey text-white p-4 flex justify-between items-center">
             <h1 className="text-2xl">Social Media Application</h1>
             <nav>
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Home</button>
@@ -24,7 +24,7 @@ const Header = () => {
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Notifications</button>
                 <button
                     onClick={handleLogout}
-                    className='mx-2 p-2 bg-red-500 hover:bg-red-400 rounded'
+                    className='mx-2 p-2 bg-lightRed hover:bg-red-400 rounded'
                 >
                     Logout
                 </button>
