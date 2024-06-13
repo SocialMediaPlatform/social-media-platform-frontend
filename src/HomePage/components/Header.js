@@ -24,7 +24,7 @@ const Header = () => {
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Notifications</button>
                 <button
                     onClick={handleLogout}
-                    className='mx-2 p-2 bg-lightRed hover:bg-red-400 rounded'
+                    className='mx-2 p-2 bg-lightRed transition duration-200 hover:bg-hoverRed rounded'
                 >
                     Logout
                 </button>
