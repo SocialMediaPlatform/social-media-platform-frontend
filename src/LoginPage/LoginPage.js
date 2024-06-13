@@ -27,13 +27,13 @@ const LoginPage = () => {
             <div className="border-l border-borderGrey mt-28 mb-28 bg-backgroundGrey">
             </div>
             <div className="flex-1 flex items-center justify-center">
-                <div className="max-w-2xl w-full space-y-10 p-20 border border-borderGrey rounded-xl shadow-lg">
+                <div className="max-w-2xl w-full space-y-10 p-20 rounded-xl">
                     <div className="text-center">
-                        <h2 className="text-5xl font-extrabold text-white"> Yeah, it's happening!</h2>
-                        <p className="mt-5 text-lg text-textGrey">Join today.</p>
+                        <h2 className="text-5xl font-extrabold text-white">Sign in to SMP</h2>
+                        <p className="mt-5 text-lg text-textGrey">Don't hesitate.</p>
                     </div>
                     <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-                        <div className="rounded-md shadow-sm">
+                        <div className="rounded-md">
                             <div className="mb-4">
                                 <label htmlFor="username" className="sr-only">Username</label>
                                 <input
@@ -42,7 +42,7 @@ const LoginPage = () => {
                                     type="text"
                                     autoComplete="username"
                                     required
-                                    className="appearance-none rounded-md relative block w-full px-3 py-2 bg-backgroundGrey border border-borderGrey placeholder-borderGrey text-white transition duration-200 focus:outline-none focus:ring-lightRed focus:border-lightRed focus:z-10 sm:text-sm"
+                                    className="input-base"
                                     placeholder="Username"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -56,7 +56,7 @@ const LoginPage = () => {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none rounded-md relative block w-full px-3 py-2 bg-backgroundGrey border border-borderGrey placeholder-borderGrey text-white transition duration-200 focus:outline-none focus:ring-lightRed focus:border-lightRed focus:z-10 sm:text-sm"
+                                    className="input-base"
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -73,7 +73,7 @@ const LoginPage = () => {
                         </div>
                     </form>
                     <div className="text-center mt-4">
-                        <p className="text-gray-300">Don't have an account? <a href="#" className="font-medium text-lightRed hover:text-hoverRed">Sign up</a></p>
+                        <p className="text-textGrey">Don't have an account? <a href="register" className="font-medium text-lightRed hover:text-hoverRed">Sign up</a></p>
                     </div>
                 </div>
             </div>
