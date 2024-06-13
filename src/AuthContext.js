@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
                     username: "testuser"
                 }
                 setUser(mockUser);
-                console.log(mockUser);
             } catch (error) {
                 setUser(null);
             }
@@ -57,6 +56,36 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (username, email, password) => {
+        try {
+            //const response = await fetch('api/auth/register', {
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json'
+            //    },
+            //    credentials: 'include',
+            //    body: JSON.stringify({username, password})
+            //
+            //});
+            //
+            //if (!response.ok) {
+            //    throw new Error('Logout failed');
+            //}
+            //
+            //const data = await response.json();
+
+            const mockUser = {
+                username: username,
+                email: email,
+                password: password
+            }
+            setUser(mockUser);
+        } catch (error) {
+            console.error('Register error:', error);
+            throw error;
+        }
+    };
+
     const logout = async () => {
         try {
         //    const response = await fetch('/api/auth/logout', {
@@ -76,7 +105,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
