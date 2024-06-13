@@ -15,6 +15,7 @@ module.exports = {
           lightRed: '#ec4c23',
           hoverRed: '#ec6e50',
           borderGrey: '#5c5c5c',
+          textGrey: '#7b7b7b',
       },
     },
   },
