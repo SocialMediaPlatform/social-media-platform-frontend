@@ -19,8 +19,8 @@ const MainFeed = () => {
         <div className='box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey'>
             <NewPost addPost={addPost} />
             {posts.map(post => (
-                <div key={post.id} className='border-b border-borderGrey p-4'>
-                    <p className='text-white'>{post.content}</p>
+                <div key={post.id} className='border-b border-borderGrey p-4 break-words transition duration-300 hover:bg-hoverBackgroundGrey'>
+                    <p className='text-white' style={{ whiteSpace: 'pre-wrap' }}>{post.content}</p>
                 </div>
             ))}
         </div>
