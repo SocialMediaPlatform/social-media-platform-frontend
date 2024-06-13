@@ -1,12 +1,14 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -18,6 +20,9 @@ const LoginPage = () => {
                 alert("Login failed");
             });
     };
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <div className="h-screen flex bg-backgroundGrey">
@@ -62,6 +67,15 @@ const LoginPage = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
+                            <div className="text-center mt-4">
+                                <button
+                                    type="button"
+                                    onClick={openModal}
+                                    className="font-medium text-lightRed hover:text-hoverRed"
+                                >
+                                    Forgot your password?
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <button
@@ -77,6 +91,7 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
+            {isModalOpen && <ResetPasswordModal closeModal={closeModal}/>}
         </div>
     );
 };
