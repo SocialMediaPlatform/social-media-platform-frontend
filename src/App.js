@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { BrowserRouter as Router, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import HomePage from "./HomePage/HomePage";
 import LoginPage from "./LoginPage/LoginPage";
+import RegisterPage from "./RegisterPage/RegisterPage";
 import { AuthContext, AuthProvider } from "./AuthContext";
 import './index.css'
 
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/" element={<CheckAuth />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/home" element={<HomePage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                 </Routes>
             </Router>
         </AuthProvider>
