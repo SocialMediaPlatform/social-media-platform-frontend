@@ -16,7 +16,7 @@ const Header = () => {
     }
     return (
         <header className="border-b bg-backgroundGrey border-borderGrey text-white p-4 flex justify-between items-center">
-            <h1 className="text-2xl">Social Media Application</h1>
+            <h1 className="text-2xl">Social Media Platform</h1>
             <nav>
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Home</button>
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Profile</button>
