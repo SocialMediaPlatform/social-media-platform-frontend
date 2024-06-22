@@ -16,6 +16,8 @@ module.exports = {
           hoverRed: '#ec6e50',
           borderGrey: '#5c5c5c',
           textGrey: '#7b7b7b',
+          hoverTextGrey: '#9b9b9b',
+          avatarGrey: '#979797',
       },
     },
   },
