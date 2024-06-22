@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 const ResetPasswordModal = ({ closeModal }) => {
-    const [emailOrUsername, setEmailOrUsername] = useState("");
+    const [email, setEmail] = useState("");
     
     const handleSubmit = (e) => {
         e.preventDefault();
         // implement logic for post request
-        alert(`Reset link sent to ${emailOrUsername}`);
+        alert(`Reset link sent to ${email}`);
         closeModal();
     };
 
@@ -24,7 +24,7 @@ const ResetPasswordModal = ({ closeModal }) => {
                 </button>
                 <div className="text-center">
                     <h2 className="text-2xl font-extrabold text-white mb-4">Reset your password</h2>
-                    <p className="text-xl text-textGrey mb-12">Enter the email or username associated with your account to change your password.</p>
+                    <p className="text-xl text-textGrey mb-12">Enter the email associated with your account to receive your password.</p>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-96">
@@ -34,8 +34,8 @@ const ResetPasswordModal = ({ closeModal }) => {
                             name="emailOrUsername"
                             type="text"
                             placeholder="Email or Username"
-                            value={emailOrUsername}
-                            onChange={(e) => setEmailOrUsername(e.target.value)}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="input-base"
                         />
                     </div>

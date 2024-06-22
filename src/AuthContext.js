@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         checkUserLoggedIn();
     }, []);
 
-    const login = async (username, password) => {
+    const login = async (email, password) => {
         try {
             //const response = await fetch('/api/auth/login', {
             //    method: 'POST',
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
             //const data = await response.json();
 
             const mockUser = {
-                username: username
+                email: email
             }
             setUser(mockUser);
         } catch (error) {
