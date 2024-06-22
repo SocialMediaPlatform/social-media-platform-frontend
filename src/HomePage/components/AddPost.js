@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const NewPost = ({ addPost }) => {
+const AddPost = ({ addPost }) => {
     const [postContent, setPostContent] = useState('');
 
     const handlePostChange = (e) => {
@@ -44,5 +44,5 @@ const NewPost = ({ addPost }) => {
     );
 };
 
-export default NewPost;
+export default AddPost;
 

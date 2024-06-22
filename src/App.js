@@ -7,36 +7,36 @@ import { AuthContext, AuthProvider } from "./AuthContext";
 import './index.css'
 
 const CheckAuth = () => {
-    const { user } = useContext(AuthContext);
+    const { userToken } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuthStatus = async () => {
-            console.log(user);
-            if (user) {
+            console.log(userToken);
+            if (userToken) {
                 navigate("/home");
             } else {
                 navigate("/login");
             }
         };
     checkAuthStatus();
-    }, [user, navigate])
+    }, [userToken, navigate])
 
     return null;
 };
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
+        <Router>
+            <AuthProvider>
                 <Routes>
                     <Route path="/" element={<CheckAuth />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/register" element={<RegisterPage />} />
                 </Routes>
-            </Router>
-        </AuthProvider>
+            </AuthProvider>
+        </Router>
     );
 }
 
