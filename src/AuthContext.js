@@ -1,33 +1,41 @@
 import React, { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 //Commented sections should be valid cookie handling implementation
 //I had to mock the data so I could test if routing works 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [userToken, setUserToken] = useState(localStorage.getItem('userToken'));
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const checkUserLoggedIn = async () => {
-            try {
-                //const response = await fetch('/api/auth/me', {
-                //    credentials: 'include'
-                //});
-                //const data = await response.json();
-                //if (data) {
-                //    setUser(data);
-                //}
-                const mockUser = {
-                    username: "testuser"
-                }
-                setUser(mockUser);
-            } catch (error) {
-                setUser(null);
-            }
-        };
+        if (!userToken) {
+            navigate('/login');
+        } else {
+            verifyToken();
+        }
+    }, [userToken, navigate]); 
 
-        checkUserLoggedIn();
-    }, []);
+    const verifyToken = async () => {
+        try {
+            //const response = await fetch('/api/auth/verifyToken', {
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json',
+            //        'Authorization': `Bearer ${userToken}`
+            //    }
+            //});
+            //if (!response.ok) {
+            //    throw new Error('Token verification failed');
+            //}
+        } catch (error) {
+            console.error('Authentication error:', error);
+            localStorage.removeItem('userToken');
+            setUserToken(null);
+            navigate('/login');
+        }
+    };
 
     const login = async (email, password) => {
         try {
@@ -49,7 +57,7 @@ export const AuthProvider = ({ children }) => {
             const mockUser = {
                 email: email
             }
-            setUser(mockUser);
+            setUserToken(mockUser);
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -79,7 +87,7 @@ export const AuthProvider = ({ children }) => {
                 email: email,
                 password: password
             }
-            setUser(mockUser);
+            setUserToken(mockUser);
         } catch (error) {
             console.error('Register error:', error);
             throw error;
@@ -97,7 +105,7 @@ export const AuthProvider = ({ children }) => {
         //    throw new Error('Logout failed');
         //}
 
-            setUser(null);
+            setUserToken(null);
         } catch (error) {
             console.error('Logout error:', error);
             throw error;
@@ -105,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout }}>
+        <AuthContext.Provider value={{ userToken, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
