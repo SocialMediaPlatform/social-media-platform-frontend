@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Navigate, Route, Routes, useNavigate } from "r
 import HomePage from "./HomePage/HomePage";
 import LoginPage from "./LoginPage/LoginPage";
 import RegisterPage from "./RegisterPage/RegisterPage";
+import ProfilePage from "./ProfilePage/ProfilePage";
+import ResetPasswordPage from "./ResetPasswordPage/ResetPasswordPage";
 import { AuthContext, AuthProvider } from "./AuthContext";
 import './index.css'
 
@@ -34,6 +36,8 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/register/reset-password" element={<ResetPasswordPage />} />
                 </Routes>
             </AuthProvider>
         </Router>

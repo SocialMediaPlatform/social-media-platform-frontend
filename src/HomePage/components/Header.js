@@ -6,6 +6,14 @@ const Header = () => {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const handleHome = () => {
+        navigate('/home')
+    }
+
+    const handleProfile = () => {
+        navigate('/profile')
+    }
+
     const handleLogout = async () => {
         try {
             await logout();
@@ -18,8 +26,18 @@ const Header = () => {
         <header className="border-b bg-backgroundGrey border-borderGrey text-white p-4 flex justify-between items-center">
             <h1 className="text-2xl">Social Media Platform</h1>
             <nav>
-                <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Home</button>
-                <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Profile</button>
+                <button
+                    onClick={handleHome}
+                    className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'
+                >
+                    Home
+                </button>
+                <button
+                    onClick={handleProfile}
+                    className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'
+                >
+                    Profile
+                </button>
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Messages</button>
                 <button className='mx-2 p-2 bg-gray-700 hover:bg-gray-600 rounded'>Notifications</button>
                 <button
