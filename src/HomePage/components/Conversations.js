@@ -1,15 +1,64 @@
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import ConvSidebar from './ConvSidebar';
 import ConvModal from './ConvModal'; 
 import { AuthContext } from '../../AuthContext';
 
 const Conversations = () => {
-    const userToken = useContext(AuthContext); 
+    const { userToken, userId } = useContext(AuthContext); 
     const [conversationContent, setConversationContent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const users = [{ id: 1, username: 'Alice' }, { id: 2, username: 'Bob' }];
-    const groups = [{ id: 1, name: 'Grupa 2' }, { id: 2, name: 'Grupa 2' }];
+    const [users, setUsers] = useState([{ userId: 1, username: 'Alice' }, { userId: 2, username: 'Bob' }]);
+    const [groups, setGroups] = useState([{ id: 1, name: 'Grupa 2' }, { id: 2, name: 'Grupa 2' }]);
+
+    useEffect(() => {
+        if (userToken) {
+            const fetchFollowedUsers = async () => {
+                try {
+                    const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    setUsers(result);
+                } catch (error) {
+                    console.error('Error fetching followed users:', error);
+                }
+            };
+            fetchFollowedUsers();
+        }
+    }, [userId, userToken, users]);
+
+
+    useEffect(() => {
+        if (userToken) {
+            const fetchGroups = async () => {
+                try {
+                    const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    setGroups(result);
+                } catch (error) {
+                    console.error('Error fetching groups:', error);
+                }
+            };
+            fetchGroups();
+        }
+    }, [userId, userToken, groups]);
 
     const handleUserSelect = (user) => {
         if (userToken){
@@ -25,6 +74,10 @@ const Conversations = () => {
                     if (!response.ok) {
                         throw new Error(`${response.status}`);
                     }
+                    if (response.headers.get('Content-Length') === '0'){
+                        setConversationContent(null);
+                        return;
+                    }
                     const result = await response.json();
                     setConversationContent(result);
                 } catch (error) {
@@ -33,7 +86,16 @@ const Conversations = () => {
             };
             fetchConversationContent();
             if (!conversationContent){
-                setConversationContent({usernames: [user.username]});
+                setConversationContent({
+                        conversationId: null, 
+                        recipients: [
+                            {
+                            userId: user.userId,
+                            username: user.username
+                            }
+                            ], 
+                        messages:[]
+                });
             }
             setIsModalOpen(true);
         }
