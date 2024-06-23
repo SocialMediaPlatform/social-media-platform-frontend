@@ -10,10 +10,12 @@ module.exports = {
         },
         colors: {
           backgroundGrey: '#121212',
+          hoverConvGrey: '#474747',
           hoverBackgroundGrey: '#161616',
           borderBoxGrey: '#252526',
           lightRed: '#ec4c23',
           hoverRed: '#ec6e50',
+          convModalGrey: '#191919',
           borderGrey: '#5c5c5c',
           textGrey: '#7b7b7b',
           hoverTextGrey: '#9b9b9b',
