@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 
 const ConvModal = ({ content, closeModal }) => {
-    console.log(content);
     let messagesArray = [...content.messages];
     messagesArray.reverse();
     const [users, setUsers] = useState(content.recipients);
@@ -85,6 +84,10 @@ const ConvModal = ({ content, closeModal }) => {
 
     const isMessageValid = newMessage.trim() !== '';
 
+    const handleAddUser = () => {
+        alert("Add user clicked!");
+    };
+
     return (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75'>
             <div className='bg-convModalGrey h-[calc(100%-10rem)] rounded-2xl shadow-2xl max-w-7xl w-full flex flex-col'>
@@ -92,15 +95,22 @@ const ConvModal = ({ content, closeModal }) => {
                     <button
                         type='button'
                         onClick={closeModal}
-                        className='text-gray-400 hover:text-gray-200 '
+                        className='text-gray-400 hover:text-gray-200'
                     >
                         <svg xmlns='http://www.w3.org/2000/svg' className='h-12 w-12' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M6 18L18 6M6 6l12 12' />
                         </svg>
                     </button>
                     <div className='flex-1 mt-2'>
-                        <h2 className="text-2xl font-extrabold text-white ">{users.map(user => user.username).join(', ')}</h2>
+                        <h2 className='text-2xl font-extrabold text-white '>{users.map(user => user.username).join(', ')}</h2>
                     </div>
+                    <button
+                        type='button'
+                        onClick={handleAddUser}
+                        className='transition duration-200 hover:bg-hoverTextGrey p-2 rounded-full h-12 w-12'
+                    >
+                        <FontAwesomeIcon icon={faUserPlus} className='text-white' />
+                    </button>
                 </div>
                 <div className='overflow-auto h-full my-8 px-6 flex flex-col-reverse'>
                     {messages.map((message, index) => (
