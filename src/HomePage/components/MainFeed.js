@@ -4,7 +4,6 @@ import AddPost from './AddPost';
 import Post from './Post';
 
 const MainFeed = () => {
-    //const [posts, setPosts] = useState(posts);
     const [posts, setPosts] = useState([
         { id: 1, username: 'mikex19', likes: 5, comments: 2, isLiked: false, content: 'Test post 1\ndkamskldmaskldmklasmdklas\nmakldmaskldmklasmdklasm\nmaskdmaskldmaskldmaklsm' },
         { id: 2, username: 'baronooo', likes: 3, comments: 1, isLiked: true, content: 'Test post 2' },
@@ -40,19 +39,19 @@ const MainFeed = () => {
         const newPost = {
             id: posts.length + 1,
             username: 'mock',
-            content,
             likes: 0,
             comments: 0,
-            isLiked: false
+            isLiked: false,
+            content
         };
         setPosts([newPost, ...posts]);
     };
 
     return (
-        <div className='box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey'>
+        <div className='max-h-screen overflow-y-auto box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey '>
             <AddPost addPost={addPost} />
             {posts.map(post => (
-                <Post post={post} />
+                <Post key={post.id} post={post} />
             ))}
         </div>
     );

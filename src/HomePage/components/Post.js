@@ -30,9 +30,9 @@ const Post = ({ post }) => {
                         {post.username[0].toUpperCase()}
                     </div>
                 </div>
-                <div className='ml-4 mt-1 flex-grow'>
+                <div className='ml-4 mt-1 flex-grow '>
                     <p className='text-white text-xl'>{post.username}</p>
-                    <p className='text-white' style={{ whiteSpace: 'pre-wrap' }}>{post.content}</p>
+                    <p className='text-white break-all' style={{ whiteSpace: 'pre-wrap' }}>{post.content}</p>
                     <div className='flex mt-2 items-center text-xl text-textGrey'>
                         <div className='w-1/6'>
                             <button onClick={toggleLike} className='flex items-center'>

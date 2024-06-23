@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 //I had to mock the data so I could test if routing works 
 export const AuthProvider = ({ children }) => {
     const [userToken, setUserToken] = useState(localStorage.getItem('userToken'));
+    const [userId, setUserId] = useState(localStorage.getItem('userId'));
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -34,7 +35,9 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Authentication error:', error);
             localStorage.removeItem('userToken');
+            localStorage.removeItem('userId');
             setUserToken(null);
+            setUserId(null);
             navigate('/login');
         }
     };
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }) => {
                 email: email
             }
             setUserToken(mockUser);
+            setUserId(0);
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -90,6 +94,7 @@ export const AuthProvider = ({ children }) => {
                 password: password
             }
             setUserToken(mockUser);
+            setUserId(0);
         } catch (error) {
             console.error('Register error:', error);
             throw error;
@@ -130,6 +135,7 @@ export const AuthProvider = ({ children }) => {
         //}
 
             setUserToken(null);
+            setUserId(null);
         } catch (error) {
             console.error('Logout error:', error);
             throw error;
@@ -137,7 +143,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userToken, login, register, resetPassword, logout }}>
+        <AuthContext.Provider value={{ userToken, userId, login, register, resetPassword, logout }}>
             {children}
         </AuthContext.Provider>
     );
