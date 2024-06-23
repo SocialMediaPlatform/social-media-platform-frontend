@@ -15,32 +15,8 @@ export const AuthProvider = ({ children }) => {
         const currentPath = location.pathname;
         if (!userToken && !['/login', '/register', '/register/reset-password'].includes(currentPath)) {
             navigate('/login');
-        } else {
-            verifyToken();
         }
-    }, [userToken, navigate]); 
-
-    const verifyToken = async () => {
-        try {
-            //const response = await fetch('/api/auth/verifyToken', {
-            //    method: 'POST',
-            //    headers: {
-            //        'Content-Type': 'application/json',
-            //        'Authorization': `Bearer ${userToken}`
-            //    }
-            //});
-            //if (!response.ok) {
-            //    throw new Error('Token verification failed');
-            //}
-        } catch (error) {
-            console.error('Authentication error:', error);
-            localStorage.removeItem('userToken');
-            localStorage.removeItem('userId');
-            setUserToken(null);
-            setUserId(null);
-            navigate('/login');
-        }
-    };
+    }, [userToken, navigate]);
 
     const login = async (email, password) => {
         try {
