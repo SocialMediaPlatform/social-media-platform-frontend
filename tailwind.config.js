@@ -12,6 +12,7 @@ module.exports = {
           backgroundGrey: '#121212',
           hoverConvGrey: '#474747',
           hoverBackgroundGrey: '#161616',
+          messageGrey: '#3a3a3a',
           borderBoxGrey: '#252526',
           lightRed: '#ec4c23',
           hoverRed: '#ec6e50',
