@@ -6,6 +6,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 
 const ConvModal = ({ content, closeModal }) => {
+    console.log(content);
     let messagesArray = [...content.messages];
     messagesArray.reverse();
     const [users, setUsers] = useState(content.recipients);
@@ -48,21 +49,27 @@ const ConvModal = ({ content, closeModal }) => {
                     }
                     setMessages([result, ...messages]);
                 } else {
-                    const response = await fetch(`/api/v1/conversations/${content.conversationId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${userToken}`
-                        },
-                        body: JSON.stringify({
-                            messageContent: messagePayload.content,
-                        })
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to send message');
+                    //const response = await fetch(`/api/v1/conversations/${content.conversationId}`, {
+                    //    method: 'POST',
+                    //    headers: {
+                    //        'Content-Type': 'application/json',
+                    //        'Authorization': `Bearer ${userToken}`
+                    //    },
+                    //    body: JSON.stringify({
+                    //        messageContent: messagePayload.content,
+                    //    })
+                    //});
+                    //if (!response.ok) {
+                    //    throw new Error('Failed to send message');
+                    //}
+                    //const result = await response.json();
+                    const result = {
+                        messageId: 1,
+                        messageContent: messagePayload.content,
+                        messageDate: new Date().toISOString(),
+                        senderId: userId
                     }
-                    const result = await response.json();
-                    setMessages([...messages, result]);
+                    setMessages([result, ...messages]);
                 }
                 setNewMessage('');
             } catch (error) {
