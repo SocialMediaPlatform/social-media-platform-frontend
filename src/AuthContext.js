@@ -111,8 +111,6 @@ export const AuthProvider = ({ children }) => {
             if (!response.ok) {
                throw new Error('Password reset failed');
             }
-            
-            const data = await response.json();
 
         } catch (error) {
             console.error('Password reset error:', error);
