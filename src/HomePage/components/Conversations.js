@@ -159,10 +159,15 @@ const Conversations = () => {
         }
     };
 
+    const handleModalClose = () => {
+        setConversationContent(null);
+        setIsModalOpen(false);
+    };
+
     return (
         <div className='fixed right-0 top-18 w-1/6 h-full flex overflow-auto max-h-[calc(100%-4.5rem)]'>
             <ConvSidebar users={users} groups={groups} userSelect={handleUserSelect} groupSelect={handleGroupSelect} />
-            {isModalOpen && <ConvModal content={conversationContent} closeModal={() => setIsModalOpen(false)} />}
+            {isModalOpen && <ConvModal content={conversationContent} closeModal={handleModalClose} />}
         </div>
     );
 };
