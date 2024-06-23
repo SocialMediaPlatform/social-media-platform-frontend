@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const AuthContext = createContext();
 
@@ -8,9 +8,11 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [userToken, setUserToken] = useState(localStorage.getItem('userToken'));
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        if (!userToken) {
+        const currentPath = location.pathname;
+        if (!userToken && !['/login', '/register', '/register/reset-password'].includes(currentPath)) {
             navigate('/login');
         } else {
             verifyToken();
@@ -66,21 +68,21 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (username, email, password) => {
         try {
-            //const response = await fetch('api/auth/register', {
-            //    method: 'POST',
-            //    headers: {
-            //        'Content-Type': 'application/json'
-            //    },
-            //    credentials: 'include',
-            //    body: JSON.stringify({username, password})
-            //
-            //});
-            //
-            //if (!response.ok) {
-            //    throw new Error('Logout failed');
-            //}
-            //
-            //const data = await response.json();
+                //const response = await fetch('api/auth/register', {
+                //    method: 'POST',
+                //    headers: {
+                //        'Content-Type': 'application/json'
+                //    },
+                //    credentials: 'include',
+                //    body: JSON.stringify({username, password})
+                //
+                //});
+                //
+                //if (!response.ok) {
+                //    throw new Error('Logout failed');
+                //}
+                //
+                //const data = await response.json();
 
             const mockUser = {
                 username: username,
@@ -90,6 +92,28 @@ export const AuthProvider = ({ children }) => {
             setUserToken(mockUser);
         } catch (error) {
             console.error('Register error:', error);
+            throw error;
+        }
+    };
+
+    const resetPassword = async (password, token) => {
+        try {
+            const response = await fetch('http://localhost:6868/api/v1/auth/reset-password', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               },
+               credentials: 'include',
+               body: JSON.stringify({password, token})
+            
+            });
+            
+            if (!response.ok) {
+               throw new Error('Password reset failed');
+            }
+
+        } catch (error) {
+            console.error('Password reset error:', error);
             throw error;
         }
     };
@@ -113,7 +137,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userToken, login, register, logout }}>
+        <AuthContext.Provider value={{ userToken, login, register, resetPassword, logout }}>
             {children}
         </AuthContext.Provider>
     );
