@@ -11,10 +11,12 @@ const ConvModal = ({ content, closeModal }) => {
     const [users, setUsers] = useState(content.recipients);
     const [messages, setMessages] = useState(messagesArray);
     const [newMessage, setNewMessage] = useState(null);
-    const { userId } = useContext(AuthContext);
+    const { userToken, userId } = useContext(AuthContext);
 
     const handleSend = (e) => {
-
+        if(userToken) {
+            
+        }
     };
 
     const getUsernameById = (userId) => {
