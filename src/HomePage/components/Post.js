@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faComments } from '@fortawesome/free-solid-svg-icons';
 
 const Post = ({ post }) => {
-    console.log(post)
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.likes);
 
