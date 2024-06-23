@@ -10,12 +10,64 @@ const ConvModal = ({ content, closeModal }) => {
     messagesArray.reverse();
     const [users, setUsers] = useState(content.recipients);
     const [messages, setMessages] = useState(messagesArray);
-    const [newMessage, setNewMessage] = useState(null);
+    const [newMessage, setNewMessage] = useState('');
     const { userToken, userId } = useContext(AuthContext);
 
-    const handleSend = (e) => {
-        if(userToken) {
-            
+    const sortMessagesByDate = (messages) => {
+        return messages.sort((a, b) => new Date(a.messageDate) - new Date(b.messageDate));
+    };
+
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if (userToken && isMessageValid) {
+            const messagePayload = {
+                content: newMessage,
+                recipientId: users[0].userId
+            };
+
+            try {
+                if (!content.conversationId) {
+                    //const response = await fetch('/api/v1/conversations', {
+                    //    method: 'POST',
+                    //    headers: {
+                    //        'Content-Type': 'application/json',
+                    //        'Authorization': `Bearer ${userToken}`
+                    //    },
+                    //    body: JSON.stringify(messagePayload)
+                    //});
+                    //if (!response.ok) {
+                    //    throw new Error('Failed to create new conversation');
+                    //}
+                    //const result = await response.json();
+                    //content.conversationId = result.conversationId;
+                    const result = {
+                        messageId: 1,
+                        messageContent: messagePayload.content,
+                        messageDate: new Date().toISOString(),
+                        senderId: userId
+                    }
+                    setMessages([result, ...messages]);
+                } else {
+                    const response = await fetch(`/api/v1/conversations/${content.conversationId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        body: JSON.stringify({
+                            messageContent: messagePayload.content,
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
+                    }
+                    const result = await response.json();
+                    setMessages([...messages, result]);
+                }
+                setNewMessage('');
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
         }
     };
 
@@ -24,6 +76,7 @@ const ConvModal = ({ content, closeModal }) => {
         return user ? user.username: 'Unknown user';
     };
 
+    const isMessageValid = newMessage.trim() !== '';
 
     return (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75'>
@@ -81,8 +134,11 @@ const ConvModal = ({ content, closeModal }) => {
                     />
                     <button
                         type='submit'
-                            className='scale-150 p-2 bg-lightRed rounded-full flex items-center justify-center'
-                            aria-label="Send message"
+                        className={`scale-150 bg-lightRed p-2 rounded-full flex items-center justify-center ${
+                            isMessageValid ? 'transition duration-200 hover:bg-hoverRed' : 'opacity-50 cursor-not-allowed'
+                        }`}
+                        aria-label="Send message"
+                        disabled={!isMessageValid}
                     >
                         <FontAwesomeIcon icon={faPaperPlane} className="text-convModalGrey" />
                     </button>
