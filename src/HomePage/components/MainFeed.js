@@ -4,47 +4,57 @@ import AddPost from './AddPost';
 import Post from './Post';
 
 const MainFeed = () => {
-    const [posts, setPosts] = useState([
-        { id: 1, username: 'mikex19', likes: 5, comments: 2, isLiked: false, content: 'Test post 1\ndkamskldmaskldmklasmdklas\nmakldmaskldmklasmdklasm\nmaskdmaskldmaskldmaklsm' },
-        { id: 2, username: 'baronooo', likes: 3, comments: 1, isLiked: true, content: 'Test post 2' },
-    ]);
+    const [posts, setPosts] = useState([]);
 
-    const { userToken } = useContext(AuthContext);
+    const { userToken, userId, apiUrl } = useContext(AuthContext);
+
+    const fetchPosts = async () => {
+        try {
+            const response = await fetch(apiUrl + '/api/v1/post/followed/' + userId, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            setPosts(result);
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
 
     useEffect(() => {
         if (userToken) {
-            const fetchPosts = async () => {
-                try {
-                    const response = await fetch('/api/posts', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${userToken}`
-                        },
-                        credentials: 'include'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`${response.status}`);
-                    }
-                    const result = await response.json();
-                    setPosts(result);
-                } catch (error) {
-                    console.error('Error fetching posts:', error);
-                }
-            };
             fetchPosts();
         }
-    }, [userToken]);
+    }, [userToken, userId]);
 
-    const addPost = (content) => {
-        const newPost = {
-            id: posts.length + 1,
-            username: 'mock',
-            likes: 0,
-            comments: 0,
-            isLiked: false,
-            content
-        };
-        setPosts([newPost, ...posts]);
+    const addPost = async (content) => {
+        try {
+            const response = await fetch(apiUrl + '/api/v1/post/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    postDate: new Date().toISOString(),
+                    postContent: content,
+                    userId: userId
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            fetchPosts();
+        } catch (error) {
+            console.error('Error sending post:', error);
+        }
     };
 
     return (
