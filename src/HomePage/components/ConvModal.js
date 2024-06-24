@@ -13,10 +13,6 @@ const ConvModal = ({ content, closeModal }) => {
     const [newMessage, setNewMessage] = useState('');
     const { userToken, userId } = useContext(AuthContext);
 
-    const sortMessagesByDate = (messages) => {
-        return messages.sort((a, b) => new Date(a.messageDate) - new Date(b.messageDate));
-    };
-
     const handleSend = async (e) => {
         e.preventDefault();
         if (userToken && isMessageValid) {
@@ -84,10 +80,6 @@ const ConvModal = ({ content, closeModal }) => {
 
     const isMessageValid = newMessage.trim() !== '';
 
-    const handleAddUser = () => {
-        alert("Add user clicked!");
-    };
-
     return (
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75'>
             <div className='bg-convModalGrey h-[calc(100%-10rem)] rounded-2xl shadow-2xl max-w-7xl w-full flex flex-col'>
@@ -104,13 +96,6 @@ const ConvModal = ({ content, closeModal }) => {
                     <div className='flex-1 mt-2'>
                         <h2 className='text-2xl font-extrabold text-white '>{users.map(user => user.username).join(', ')}</h2>
                     </div>
-                    <button
-                        type='button'
-                        onClick={handleAddUser}
-                        className='transition duration-200 hover:bg-hoverTextGrey p-2 rounded-full h-12 w-12'
-                    >
-                        <FontAwesomeIcon icon={faUserPlus} className='text-white' />
-                    </button>
                 </div>
                 <div className='overflow-auto h-full my-8 px-6 flex flex-col-reverse'>
                     {messages.map((message, index) => (
