@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faComments } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
 
 const Post = ({ post }) => {
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.reactionsCount);
-    console.log(post)
+    console.log(post);
+    const navigate = useNavigate()
 
     const toggleLike = async () => {
         try {
@@ -24,7 +26,7 @@ const Post = ({ post }) => {
     };
 
     return (
-        <div className='border-b border-borderGrey p-4 break-words transition duration-300 hover:bg-hoverBackgroundGrey'>
+        <div className='border-b border-borderGrey p-4 break-words transition duration-300 hover:bg-hoverBackgroundGrey' onClick={() => navigate('/post/' + post.postId)}>
             <div className='flex'>
                 <div className='items-start p-1'>
                     <div className='rounded-full h-8 w-8 flex items-center justify-center bg-avatarGrey text-white'>
