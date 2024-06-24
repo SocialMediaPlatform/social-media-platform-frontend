@@ -4,9 +4,11 @@ import Header from '../HomePage/components/Header';
 import Post from '../HomePage/components/Post';
 import { useParams } from 'react-router-dom';
 import AddComment from './components/AddComment';
+import Comment from './components/Comment';
 
 const PostPage = () => {
     const [post, setPost] = useState(null);
+    const [comments, setComments] = useState([]);
 
     const { userToken, userId, apiUrl } = useContext(AuthContext);
     const { postid } = useParams();
@@ -27,6 +29,24 @@ const PostPage = () => {
             setPost(result);
         } catch (error) {
             console.error('Error fetching post:', error);
+        }
+        try {
+            const response = await fetch(apiUrl + '/api/v1/comment/' + postid, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            result.reverse();
+            console.log(result)
+            setComments(result);
+        } catch (error) {
+            console.error('Error fetching comments:', error);
         }
     };
 
@@ -64,12 +84,18 @@ const PostPage = () => {
     return (
         <div className='flex flex-col h-screen overflow-hidden'>
             <Header />
-            <div className='bg-backgroundGrey flex flex-1 justify-center items-stretch'>
-                <div className='max-h-screen overflow-y-auto box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey '>
+            <div className='bg-backgroundGrey flex flex-1 justify-center items-stretch h-0'>
+                <div className='max-h-screen overflow-y-auto box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey flex'>
                     {post ?
                     <>
                         <Post post={post} />
-                        <AddComment addComment={addMainComment} />
+                        <div className='border-l border-borderGrey ml-8 flex-grow'>
+                            <AddComment addComment={addMainComment} />
+                            {comments.map(comment => (
+                                <Comment key={comment.id} comment={comment} fetchPost={fetchPost} />
+                            ))}
+
+                        </div>
                     </>
                     : <></>}
                 </div>
