@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane}  from '@fortawesome/free-solid-svg-icons';
 
 
 
-const ConvModal = ({ content, closeModal }) => {
+const ConvModal = ({ content, addGroup, closeModal }) => {
     let messagesArray = [...content.messages];
     messagesArray.reverse();
     const [users, setUsers] = useState(content.recipients);
@@ -16,11 +16,19 @@ const ConvModal = ({ content, closeModal }) => {
     const handleSend = async (e) => {
         e.preventDefault();
         if (userToken && isMessageValid) {
-            const messagePayload = {
-                content: newMessage,
-                recipientId: users[0].userId
-            };
+            let messagePayload;
+            if (users.length > 1) {
+                messagePayload = {
+                    content: newMessage,
+                    recipientIds: users.map(user => user.userId)
+                };
+            } else {
 
+                messagePayload = {
+                    content: newMessage,
+                    recipientIds: users[0].userId
+                };
+            }
             try {
                 if (!content.conversationId) {
                     //const response = await fetch('/api/v1/conversations', {
@@ -43,6 +51,9 @@ const ConvModal = ({ content, closeModal }) => {
                         senderId: userId
                     }
                     setMessages([result, ...messages]);
+                    if (users.length > 1) {
+                        addGroup({conversationId: 1, usernames: users.map(user => user.username)})
+                    }
                 } else {
                     //const response = await fetch(`/api/v1/conversations/${content.conversationId}`, {
                     //    method: 'POST',
@@ -84,6 +95,9 @@ const ConvModal = ({ content, closeModal }) => {
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-75'>
             <div className='bg-convModalGrey h-[calc(100%-10rem)] rounded-2xl shadow-2xl max-w-7xl w-full flex flex-col'>
                 <div className='shadow-md flex flex-row p-4 space-x-4'>
+                    <div className='flex-1 mt-2'>
+                        <h2 className='text-2xl font-extrabold text-white '>{users.map(user => user.username).join(', ')}</h2>
+                    </div>
                     <button
                         type='button'
                         onClick={closeModal}
@@ -93,9 +107,6 @@ const ConvModal = ({ content, closeModal }) => {
                             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M6 18L18 6M6 6l12 12' />
                         </svg>
                     </button>
-                    <div className='flex-1 mt-2'>
-                        <h2 className='text-2xl font-extrabold text-white '>{users.map(user => user.username).join(', ')}</h2>
-                    </div>
                 </div>
                 <div className='overflow-auto h-full my-8 px-6 flex flex-col-reverse'>
                     {messages.map((message, index) => (
