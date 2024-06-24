@@ -24,9 +24,9 @@ const ConvSidebar = ({ users, groups, userSelect, groupSelect }) => {
                 {groups.map(group => (
                     <li key={group.id} onClick={() => groupSelect(group)} className='flex flex-row p-4 text-lg transition duration-200 hover:bg-hoverConvGrey cursor-pointer'>
                         <div className='rounded-full h-8 w-8 mr-4 flex items-center justify-center bg-avatarGrey text-white'>
-                            {group.name[0].toUpperCase()}
+                            {group.usernames[0][0].toUpperCase()}
                         </div>
-                        <p className='mt-0.5'>{group.name}</p>
+                        <p className='mt-0.5 flex-1 truncate'>{group.usernames.join(', ')}</p>
                     </li>
                 ))}
             </ul>
