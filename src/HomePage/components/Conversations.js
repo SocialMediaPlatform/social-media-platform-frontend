@@ -221,8 +221,9 @@ const Conversations = () => {
                     openConvModal={openConvModalWithGroup}
                 />
             )}
-            <div>
-                <button onClick={handleCreateGroup} className='mt-8 bg-lightRed text-white p-2 rounded-md'>Create Group</button>
+            <div className='border-b border-borderGrey mx-8 opacity-50'></div>
+            <div className='flex justify-center py-8 border-l border-borderGrey opacity-50'>
+                <button onClick={handleCreateGroup} className='my-auto bg-lightRed text-white p-2 rounded-md'>Create Group</button>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 
 const ConvSidebar = ({ users, groups, userSelect, groupSelect }) => {
     return (
-        <div className='opacity-50 border-l border-borderGrey w-full h-full text-white'>
+        <div className='overflow-auto opacity-50 border-l border-borderGrey w-full h-full text-white'>
             <div className='p-5 '>
                 <p className='text-2xl '>Followed users</p>
             </div>
@@ -30,6 +30,7 @@ const ConvSidebar = ({ users, groups, userSelect, groupSelect }) => {
                     </li>
                 ))}
             </ul>
+            <div className='flex-grow'></div>
         </div>
     );
 };
