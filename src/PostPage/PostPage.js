@@ -3,6 +3,7 @@ import { AuthContext } from "../AuthContext";
 import Header from '../HomePage/components/Header';
 import Post from '../HomePage/components/Post';
 import { useParams } from 'react-router-dom';
+import AddComment from './components/AddComment';
 
 const PostPage = () => {
     const [post, setPost] = useState(null);
@@ -35,12 +36,42 @@ const PostPage = () => {
         }
     }, [userToken, userId]);
 
+    const addMainComment = async (content) => {
+        try {
+            const response = await fetch(apiUrl + '/api/v1/comment/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    commentDate: new Date().toISOString(),
+                    commentContents: content,
+                    userId: userId,
+                    postId: postid
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            fetchPost();
+        } catch (error) {
+            console.error('Error sending post:', error);
+        }
+    };
+
     return (
         <div className='flex flex-col h-screen overflow-hidden'>
             <Header />
             <div className='bg-backgroundGrey flex flex-1 justify-center items-stretch'>
                 <div className='max-h-screen overflow-y-auto box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey '>
-                    {post ? <Post post={post} /> : <></>}
+                    {post ?
+                    <>
+                        <Post post={post} />
+                        <AddComment addComment={addMainComment} />
+                    </>
+                    : <></>}
                 </div>
             </div>
         </div>
