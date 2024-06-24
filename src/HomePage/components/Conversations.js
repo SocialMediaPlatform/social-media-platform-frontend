@@ -12,7 +12,7 @@ const Conversations = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [isComponentMounted, setIsComponentMounted] = useState(false);
     const [users, setUsers] = useState([{ userId: 1, username: 'Alice' }, { userId: 2, username: 'Bob' }]);
-    const [groups, setGroups] = useState([{ id: 1, name: 'Grupa 2' }, { id: 2, name: 'Grupa 2' }]);
+    const [groups, setGroups] = useState([{ conversationId: 1, usernames: ['maksde25', 'lajsu69'] }, { conversationIdid: 2, usernames: ['babababa', 'mmemem'] }]);
 
     useEffect(() => {
         if (userToken) {
@@ -201,10 +201,14 @@ const Conversations = () => {
         setIsCreateGroupModalOpen(true);
     };
 
-    const openConvModalWithGroup = (group) => {
+    const handleGroupCreateSuccess = (group) => {
+        setGroups([...groups, group])
+    } 
+
+    const openConvModalWithGroup = (users) => {
         setConversationContent({
             conversationId: null,
-            recipients: group.members,
+            recipients: users,
             messages: []
         });
         setIsModalOpen(true);
@@ -213,7 +217,7 @@ const Conversations = () => {
     return (
         <div className='fixed right-0 top-18 w-1/6 h-full flex flex-col overflow-auto max-h-[calc(100%-4.5rem)]'>
             <ConvSidebar users={users} groups={groups} userSelect={handleUserSelect} groupSelect={handleGroupSelect}/>
-            {isModalOpen && <ConvModal content={conversationContent} closeModal={handleModalClose} />}
+            {isModalOpen && <ConvModal content={conversationContent} addGroup={handleGroupCreateSuccess} closeModal={handleModalClose} />}
             {isCreateGroupModalOpen && (
                 <CreateGroupModal
                     users={users}
