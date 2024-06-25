@@ -1,16 +1,18 @@
 import React, { useEffect, useContext, useState } from 'react';
 import ConvSidebar from './ConvSidebar';
 import ConvModal from './ConvModal'; 
+import CreateGroupModal from './CreateGroupModal';
 import { AuthContext } from '../../AuthContext';
 
 const Conversations = () => {
     const { userToken, userId } = useContext(AuthContext); 
     const [conversationContent, setConversationContent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isComponentMounted, setIsComponentMounted] = useState(false);
     const [users, setUsers] = useState([{ userId: 1, username: 'Alice' }, { userId: 2, username: 'Bob' }]);
-    const [groups, setGroups] = useState([{ id: 1, name: 'Grupa 2' }, { id: 2, name: 'Grupa 2' }]);
+    const [groups, setGroups] = useState([{ conversationId: 1, usernames: ['maksde25', 'lajsu69'] }, { conversationIdid: 2, usernames: ['babababa', 'mmemem'] }]);
 
     useEffect(() => {
         if (userToken) {
@@ -110,7 +112,7 @@ const Conversations = () => {
     // Use effect to ensure synchronic user selection
     useEffect(() => {
         if (isComponentMounted) {
-            if (!conversationContent){
+            if (!conversationContent && selectedUser){
                 setConversationContent({
                         conversationId: null, 
                         recipients: [
@@ -187,13 +189,46 @@ const Conversations = () => {
 
     const handleModalClose = () => {
         setConversationContent(null);
+        setSelectedUser(null);
         setIsModalOpen(false);
+    };
+    
+    const handleCreateGroupModalClose = () => {
+        setIsCreateGroupModalOpen(false);
+    };
+
+    const handleCreateGroup = () => {
+        setIsCreateGroupModalOpen(true);
+    };
+
+    const handleGroupCreateSuccess = (group) => {
+        setGroups([...groups, group])
+    } 
+
+    const openConvModalWithGroup = (users) => {
+        setConversationContent({
+            conversationId: null,
+            recipients: users,
+            messages: []
+        });
+        setIsModalOpen(true);
     };
 
     return (
-        <div className='fixed right-0 top-18 w-1/6 h-full flex overflow-auto max-h-[calc(100%-4.5rem)]'>
-            <ConvSidebar users={users} groups={groups} userSelect={handleUserSelect} groupSelect={handleGroupSelect} />
-            {isModalOpen && <ConvModal content={conversationContent} closeModal={handleModalClose} />}
+        <div className='fixed right-0 top-18 w-1/6 h-full flex flex-col overflow-auto max-h-[calc(100%-4.5rem)]'>
+            <ConvSidebar users={users} groups={groups} userSelect={handleUserSelect} groupSelect={handleGroupSelect}/>
+            {isModalOpen && <ConvModal content={conversationContent} addGroup={handleGroupCreateSuccess} closeModal={handleModalClose} />}
+            {isCreateGroupModalOpen && (
+                <CreateGroupModal
+                    users={users}
+                    closeCreateGroupModal={handleCreateGroupModalClose}
+                    openConvModal={openConvModalWithGroup}
+                />
+            )}
+            <div className='border-b border-borderGrey mx-8 opacity-50'></div>
+            <div className='flex justify-center py-8 border-l border-borderGrey opacity-50'>
+                <button onClick={handleCreateGroup} className='my-auto bg-lightRed text-white p-2 rounded-md'>Create Group</button>
+            </div>
         </div>
     );
 };
