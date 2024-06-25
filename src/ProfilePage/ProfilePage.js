@@ -9,11 +9,18 @@ import { faCheck, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 const ProfilePage = () => {
     const { userToken, userId, apiUrl } = useContext(AuthContext);
 
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(null);
+    const [isFollowed, setIsFollowed] = useState(null);
 
     const [posts, setPosts] = useState([]);
     const [editingUsername, setEditingUsername] = useState(false);
     const { userid } = useParams();
+
+    const relationTypes = {
+        follow: 1,
+        mute: 2,
+        block: 3
+    }
 
     const fetchPosts = async () => {
         try {
@@ -48,6 +55,7 @@ const ProfilePage = () => {
             }
             const result = await response.json();
             setUser(result);
+            setIsFollowed(result.followed);
         } catch (error) {
             console.error('Error fetching user:', error);
         }
@@ -94,6 +102,30 @@ const ProfilePage = () => {
         }
     }
 
+    const handleFollowUser = async () => {
+        const requestBody = {
+            userId: userId,
+            targetUserId: parseInt(user.userId),
+            relationTypeId: relationTypes.follow
+        }
+        try {
+            const response = await fetch(apiUrl + '/api/v1/userRelation/set', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include',
+                body: JSON.stringify(requestBody) 
+            });
+            if (response.ok) {
+                setIsFollowed(true);
+            }
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
+    };
+
     return (
         <div className='flex flex-col min-h-screen'>
             <Header />
@@ -121,7 +153,14 @@ const ProfilePage = () => {
                                     <button onClick={handleStartEditUsername} className='flex items-center'>
                                         <FontAwesomeIcon icon={faPen} className={`text-2xl ml-2 transition duration-200 hover:text-hoverTextGrey text-textGrey`} />
                                     </button>
-                                : <></>}
+                                : <>
+                                    <button 
+                                        onClick={handleFollowUser} 
+                                        className={`mt-2 ml-auto bg-lightRed text-white p-2 rounded-md ${isFollowed ? 'cursor-not-allowed opacity-50' : ''}`}
+                                        disabled={isFollowed}>
+                                        {isFollowed ? 'Followed' : 'Follow'}
+                                    </button>
+                                </>}
                             </div>
                             {
                                 userid == userId ?
