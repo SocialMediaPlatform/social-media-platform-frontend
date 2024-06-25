@@ -8,6 +8,7 @@ import ResetPasswordPage from "./ResetPasswordPage/ResetPasswordPage";
 import PostPage from "./PostPage/PostPage";
 import { AuthContext, AuthProvider } from "./AuthContext";
 import './index.css'
+import SearchPage from "./SearchPage/SearchPage";
 
 const CheckAuth = () => {
     const { userToken } = useContext(AuthContext);
@@ -40,6 +41,7 @@ function App() {
                     <Route path="/profile/:userid" element={<ProfilePage />} />
                     <Route path="/register/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/post/:postid" element={<PostPage />} />
+                    <Route path="/search" element={<SearchPage />} />
                 </Routes>
             </AuthProvider>
         </Router>
