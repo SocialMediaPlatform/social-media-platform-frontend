@@ -47,7 +47,7 @@ const SearchPage = () => {
             <div className='bg-backgroundGrey flex flex-1 justify-center items-stretch'>
                 <div className='box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey'>
                     {users.map(user => 
-                        <div className='p-4 border-b border-borderGrey transition duration-300 hover:bg-hoverBackgroundGrey' onClick={() => navigate('/profile/' + user.userId)}>
+                        <div className='p-4 border-b border-borderGrey transition duration-300 hover:bg-hoverBackgroundGrey cursor-pointer' onClick={() => navigate('/profile/' + user.userId)}>
                             <div className='flex flex-row items-center p-4'>
                                 <div className='rounded-full h-20 w-20 flex items-center justify-center bg-avatarGrey text-white text-5xl'>
                                     {user.username[0].toUpperCase()}
