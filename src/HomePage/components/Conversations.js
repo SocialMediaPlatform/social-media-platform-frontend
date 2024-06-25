@@ -5,35 +5,55 @@ import CreateGroupModal from './CreateGroupModal';
 import { AuthContext } from '../../AuthContext';
 
 const Conversations = () => {
-    const { userToken, userId } = useContext(AuthContext); 
+    const { apiUrl, userToken, userId } = useContext(AuthContext); 
     const [conversationContent, setConversationContent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isComponentMounted, setIsComponentMounted] = useState(false);
-    const [users, setUsers] = useState([{ userId: 1, username: 'Alice' }, { userId: 2, username: 'Bob' }]);
+    const [users, setUsers] = useState([]);
     const [groups, setGroups] = useState([{ conversationId: 1, usernames: ['maksde25', 'lajsu69'] }, { conversationIdid: 2, usernames: ['babababa', 'mmemem'] }]);
+
+    const fetchFollowedUsers = async () => {
+        try {
+            const response = await fetch(apiUrl + `/api/v1/userRelation/followed/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            setUsers(result);
+        } catch (error) {
+            console.error('Error fetching followed users:', error);
+        }
+    };
+
+    const fetchGroups = async () => {
+        try {
+            const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            setGroups(result);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    };
 
     useEffect(() => {
         if (userToken) {
-            const fetchFollowedUsers = async () => {
-                try {
-                    const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${userToken}`
-                        },
-                        credentials: 'include'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`${response.status}`);
-                    }
-                    const result = await response.json();
-                    setUsers(result);
-                } catch (error) {
-                    console.error('Error fetching followed users:', error);
-                }
-            };
             fetchFollowedUsers();
         }
     }, [userId, userToken, users]);
@@ -41,24 +61,6 @@ const Conversations = () => {
 
     useEffect(() => {
         if (userToken) {
-            const fetchGroups = async () => {
-                try {
-                    const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${userToken}`
-                        },
-                        credentials: 'include'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`${response.status}`);
-                    }
-                    const result = await response.json();
-                    setGroups(result);
-                } catch (error) {
-                    console.error('Error fetching groups:', error);
-                }
-            };
             fetchGroups();
         }
     }, [userId, userToken, groups]);
