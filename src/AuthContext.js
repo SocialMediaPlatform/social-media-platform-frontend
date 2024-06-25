@@ -11,59 +11,39 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const apiUrl = 'http://localhost:6868';
+
+    console.log(userId);
+
     useEffect(() => {
         const currentPath = location.pathname;
         if (!userToken && !['/login', '/register', '/register/reset-password'].includes(currentPath)) {
             navigate('/login');
-        } else {
-            verifyToken();
         }
-    }, [userToken, navigate]); 
-
-    const verifyToken = async () => {
-        try {
-            //const response = await fetch('/api/auth/verifyToken', {
-            //    method: 'POST',
-            //    headers: {
-            //        'Content-Type': 'application/json',
-            //        'Authorization': `Bearer ${userToken}`
-            //    }
-            //});
-            //if (!response.ok) {
-            //    throw new Error('Token verification failed');
-            //}
-        } catch (error) {
-            console.error('Authentication error:', error);
-            localStorage.removeItem('userToken');
-            localStorage.removeItem('userId');
-            setUserToken(null);
-            setUserId(null);
-            navigate('/login');
-        }
-    };
+    }, [userToken, navigate]);
 
     const login = async (email, password) => {
         try {
-            //const response = await fetch('/api/auth/login', {
-            //    method: 'POST',
-            //    headers: {
-            //        'Content-Type': 'application/json'
-            //    },
-            //    credentials: 'include',
-            //    body: JSON.stringify({ username, password })
-            //});
-            //
-            //if (!response.ok) {
-            //    throw new Error('Login failed');
-            //}
-            //
-            //const data = await response.json();
-
-            const mockUser = {
-                email: email
+            const response = await fetch(apiUrl + '/api/v1/auth/authenticate', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               },
+               credentials: 'include',
+               body: JSON.stringify({ email, password })
+            });
+            
+            if (!response.ok) {
+               throw new Error('Login failed: ' + response.status);
             }
-            setUserToken(mockUser);
-            setUserId(0);
+            
+            const data = await response.json();
+
+            setUserToken(data.token);
+            localStorage.setItem('userToken', data.token)
+            const id = JSON.parse(atob(data.token.split('.')[1]))['userId'];
+            setUserId(id);
+            localStorage.setItem('userId', id);
         } catch (error) {
             console.error('Login error:', error);
             throw error;
@@ -72,29 +52,27 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (username, email, password) => {
         try {
-                //const response = await fetch('api/auth/register', {
-                //    method: 'POST',
-                //    headers: {
-                //        'Content-Type': 'application/json'
-                //    },
-                //    credentials: 'include',
-                //    body: JSON.stringify({username, password})
-                //
-                //});
-                //
-                //if (!response.ok) {
-                //    throw new Error('Logout failed');
-                //}
-                //
-                //const data = await response.json();
-
-            const mockUser = {
-                username: username,
-                email: email,
-                password: password
+            const response = await fetch(apiUrl + '/api/v1/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({username, email, password})
+            
+            });
+            
+            if (!response.ok) {
+                throw new Error('Registration failed: ' + response.status);
             }
-            setUserToken(mockUser);
-            setUserId(0);
+            
+            const data = await response.json();
+
+            setUserToken(data.token);
+            localStorage.setItem('userToken', data.token)
+            const id = JSON.parse(atob(data.token.split('.')[1]))['userId'];
+            setUserId(id);
+            localStorage.setItem('userId', id);
         } catch (error) {
             console.error('Register error:', error);
             throw error;
@@ -103,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
     const resetPassword = async (password, token) => {
         try {
-            const response = await fetch('http://localhost:6868/api/v1/auth/reset-password', {
+            const response = await fetch(apiUrl + '/api/v1/auth/reset-password', {
                method: 'POST',
                headers: {
                    'Content-Type': 'application/json'
@@ -143,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userToken, userId, login, register, resetPassword, logout }}>
+        <AuthContext.Provider value={{ userToken, userId, apiUrl, login, register, resetPassword, logout }}>
             {children}
         </AuthContext.Provider>
     );

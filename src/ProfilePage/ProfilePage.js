@@ -4,17 +4,14 @@ import Header from '../HomePage/components/Header';
 import Post from '../HomePage/components/Post';
 
 const ProfilePage = () => {
-    const { userToken } = useContext(AuthContext);
+    const { userToken, userId, apiUrl } = useContext(AuthContext);
 
     const [user, setUser] = useState({
         username: 'mock',
         email: 'mock@example.com'
     })
 
-    const [posts, setPosts] = useState([
-        { id: 1, username: 'mock', likes: 5, comments: 2, isLiked: false, content: 'Test post 1\ndkamskldmaskldmklasmdklas\nmakldmaskldmklasmdklasm\nmaskdmaskldmaskldmaklsm' },
-        { id: 2, username: 'mock', likes: 3, comments: 1, isLiked: true, content: 'Test post 2' },
-    ]);
+    const [posts, setPosts] = useState([]);
 
     // This should load the user data from the API, but the API doesn't seem to have that feature yet
     // useEffect(() => {
@@ -41,30 +38,30 @@ const ProfilePage = () => {
     //     }
     // }, [userToken]);
 
-    // This should work, but uses hardcoded user id for now
+    const fetchPosts = async () => {
+        try {
+            const response = await fetch(apiUrl + '/api/v1/post/' + userId, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            const result = await response.json();
+            setPosts(result);
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
+
     useEffect(() => {
         if (userToken) {
-            const fetchPosts = async () => {
-                try {
-                    const response = await fetch('/api/v1/post/1', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${userToken}`
-                        },
-                        credentials: 'include'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`${response.status}`);
-                    }
-                    const result = await response.json();
-                    setPosts(result);
-                } catch (error) {
-                    console.error('Error fetching posts:', error);
-                }
-            };
             fetchPosts();
         }
-    }, [userToken]);
+    }, [userToken, userId]);
 
     return (
         <div className='flex flex-col min-h-screen'>
