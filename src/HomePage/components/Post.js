@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const Post = ({ post }) => {
     const [isLiked, setIsLiked] = useState(post.isLiked);
     const [likesCount, setLikesCount] = useState(post.reactionsCount);
-    console.log(post);
     const navigate = useNavigate()
 
     const toggleLike = async () => {

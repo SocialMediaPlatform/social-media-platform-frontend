@@ -35,7 +35,7 @@ const Conversations = () => {
 
     const fetchGroups = async () => {
         try {
-            const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
+            const response = await fetch(apiUrl + '/api/v1/conversations/group-conversations', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${userToken}`
