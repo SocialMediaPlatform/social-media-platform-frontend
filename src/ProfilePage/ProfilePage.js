@@ -3,6 +3,8 @@ import { AuthContext } from "../AuthContext";
 import Header from '../HomePage/components/Header';
 import Post from '../HomePage/components/Post';
 import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ProfilePage = () => {
     const { userToken, userId, apiUrl } = useContext(AuthContext);
@@ -10,6 +12,7 @@ const ProfilePage = () => {
     const [user, setUser] = useState(null)
 
     const [posts, setPosts] = useState([]);
+    const [editingUsername, setEditingUsername] = useState(false);
     const { userid } = useParams();
 
     const fetchPosts = async () => {
@@ -57,6 +60,40 @@ const ProfilePage = () => {
         }
     }, [userToken, userid]);
 
+    useEffect(() => {
+        if(editingUsername)
+            document.getElementById('username')?.focus();
+    }, [editingUsername]);
+
+    const handleStartEditUsername = () => {
+        setEditingUsername(true);
+    }
+
+    const handleCancelEditUsername = () => {
+        setEditingUsername(false);
+        document.getElementById('username').innerText = user.username;
+    }
+
+    const handleConfirmEditUsername = async () => {
+        try {
+            const response = await fetch(apiUrl + '/api/v1/user/setUsername/' + document.getElementById('username').innerText, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+            fetchUser();
+            setEditingUsername(false);
+        } catch (error) {
+            console.error('Error adding reaction:', error);
+        }
+    }
+
     return (
         <div className='flex flex-col min-h-screen'>
             <Header />
@@ -68,9 +105,23 @@ const ProfilePage = () => {
                                 <div className='rounded-full h-20 w-20 flex items-center justify-center bg-avatarGrey text-white text-5xl'>
                                     {user.username[0].toUpperCase()}
                                 </div>
-                                <div className='ml-4 flex-grow'>
-                                    <p className='text-white text-3xl'>{user.username}</p>
+                                <div className='ml-4'>
+                                    <p id='username' className='text-white text-3xl' contentEditable={editingUsername}>{user.username}</p>
                                 </div>
+                                {userid == userId ? editingUsername ?
+                                <>
+                                    <button onClick={handleConfirmEditUsername} className='flex items-center'>
+                                        <FontAwesomeIcon icon={faCheck} className={`text-3xl ml-2 transition duration-200 hover:text-hoverTextGrey text-textGrey`} />
+                                    </button>
+                                    <button onClick={handleCancelEditUsername} className='flex items-center'>
+                                        <FontAwesomeIcon icon={faXmark} className={`text-3xl ml-2 transition duration-200 hover:text-hoverTextGrey text-textGrey`} />
+                                    </button>
+                                </>
+                                :
+                                    <button onClick={handleStartEditUsername} className='flex items-center'>
+                                        <FontAwesomeIcon icon={faPen} className={`text-2xl ml-2 transition duration-200 hover:text-hoverTextGrey text-textGrey`} />
+                                    </button>
+                                : <></>}
                             </div>
                             {
                                 userid == userId ?
