@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from "../AuthContext";
 import Header from '../HomePage/components/Header';
 import Post from '../HomePage/components/Post';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ProfilePage = () => {
+    const navigate = useNavigate();
+
     const { userToken, userId, apiUrl } = useContext(AuthContext);
 
     const [user, setUser] = useState(null);
@@ -54,6 +56,7 @@ const ProfilePage = () => {
                 throw new Error(`${response.status}`);
             }
             const result = await response.json();
+            console.log(result);
             setUser(result);
             setIsFollowed(result.followed);
         } catch (error) {
@@ -126,6 +129,31 @@ const ProfilePage = () => {
         }
     };
 
+    const handleBlockUser = async () => {
+        const requestBody = {
+            userId: userId,
+            targetUserId: parseInt(user.userId),
+            relationTypeId: relationTypes.block
+        }
+        try {
+            const response = await fetch(apiUrl + '/api/v1/userRelation/set', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                credentials: 'include',
+                body: JSON.stringify(requestBody) 
+            });
+            if (response.ok) {
+                console.log(response);
+                navigate('/home');
+            }
+        } catch (error) {
+            console.error('Error blocking user:', error);
+        }
+    };
+
     return (
         <div className='flex flex-col min-h-screen'>
             <Header />
@@ -153,14 +181,20 @@ const ProfilePage = () => {
                                     <button onClick={handleStartEditUsername} className='flex items-center'>
                                         <FontAwesomeIcon icon={faPen} className={`text-2xl ml-2 transition duration-200 hover:text-hoverTextGrey text-textGrey`} />
                                     </button>
-                                : <>
+                                : 
+                                <div className='flex flex-col justify-between items-center ml-auto'>
                                     <button 
                                         onClick={handleFollowUser} 
-                                        className={`mt-2 ml-auto bg-lightRed text-white p-2 rounded-md ${isFollowed ? 'cursor-not-allowed opacity-50' : ''}`}
+                                        className={`mt-2 ml-auto bg-lightRed text-white p-2 rounded-md w-full ${isFollowed ? 'cursor-not-allowed opacity-50' : ''}`}
                                         disabled={isFollowed}>
                                         {isFollowed ? 'Followed' : 'Follow'}
                                     </button>
-                                </>}
+                                    <button
+                                        onClick={handleBlockUser}
+                                        className='mt-2 ml-auto bg-lightRed text-white p-2 rounded-md w-full'>
+                                        Block
+                                    </button>
+                                </div>}
                             </div>
                             {
                                 userid == userId ?
@@ -177,7 +211,7 @@ const ProfilePage = () => {
                         </div>
                     : <></>}
                 {posts.map(post => (
-                    <Post post={post} />
+                    <Post key={post.id} post={post} />
                 ))}
                 </div>
             </div>
