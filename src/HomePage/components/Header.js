@@ -3,7 +3,7 @@ import { AuthContext } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-    const { logout } = useContext(AuthContext);
+    const { logout, userId } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleHome = () => {
@@ -11,7 +11,7 @@ const Header = () => {
     }
 
     const handleProfile = () => {
-        navigate('/profile')
+        navigate('/profile/' + userId)
     }
 
     const handleLogout = async () => {

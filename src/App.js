@@ -37,7 +37,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/profile/:userid" element={<ProfilePage />} />
                     <Route path="/register/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/post/:postid" element={<PostPage />} />
                 </Routes>
