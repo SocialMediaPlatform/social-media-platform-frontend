@@ -29,12 +29,12 @@ const Post = ({ post }) => {
         <div className='border-b border-borderGrey p-4 break-words transition duration-300 hover:bg-hoverBackgroundGrey' onClick={() => navigate('/post/' + post.postId)}>
             <div className='flex'>
                 <div className='items-start p-1'>
-                    <div className='rounded-full h-8 w-8 flex items-center justify-center bg-avatarGrey text-white'>
+                    <div className='rounded-full h-8 w-8 flex items-center justify-center bg-avatarGrey text-white' onClick={() => navigate('/profile/' + post.user.userId)}>
                         {post.user.username[0].toUpperCase()}
                     </div>
                 </div>
                 <div className='ml-4 mt-1 flex-grow '>
-                    <p className='text-white text-xl'>{post.user.username}</p>
+                    <p className='text-white text-xl' onClick={() => navigate('/profile/' + post.user.userId)}>{post.user.username}</p>
                     <p className='text-white break-all' style={{ whiteSpace: 'pre-wrap' }}>{post.postContent}</p>
                     <div className='flex mt-2 items-center text-xl text-textGrey'>
                         <div className='w-1/6'>
