@@ -60,9 +60,13 @@ const MainFeed = () => {
     return (
         <div className='max-h-screen overflow-y-auto box-border border border-t-backgroundGrey border-borderGrey flex-col flex-grow max-w-2xl bg-backgroundGrey '>
             <AddPost addPost={addPost} />
-            {posts.map(post => (
-                <Post key={post.id} post={post} />
-            ))}
+            {posts.length === 0 ? (
+                <p className='text-textGrey text-2xl font-extrabold text-center mt-8'>No recent activity</p>
+            ) : (
+                posts.map(post => (
+                    <Post key={post.id} post={post} />
+                ))
+            )}
         </div>
     );
 };
