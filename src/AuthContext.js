@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
 
     const apiUrl = 'http://localhost:6868';
 
-    console.log(userId);
 
     useEffect(() => {
         const currentPath = location.pathname;
