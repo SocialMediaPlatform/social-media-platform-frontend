@@ -92,7 +92,7 @@ const PostPage = () => {
                         <div className='border-l border-borderGrey ml-8 flex-grow'>
                             <AddComment addComment={addMainComment} />
                             {comments.map(comment => (
-                                <Comment key={comment.id} comment={comment} fetchPost={fetchPost} />
+                                <Comment key={comment.commentId} comment={comment} fetchPost={fetchPost} />
                             ))}
 
                         </div>
