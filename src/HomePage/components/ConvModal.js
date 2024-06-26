@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane}  from '@fortawesome/free-solid-svg-icons';
@@ -6,12 +6,13 @@ import { faPaperPlane}  from '@fortawesome/free-solid-svg-icons';
 
 
 const ConvModal = ({ content, addGroup, closeModal }) => {
+    console.log(content);
     let messagesArray = [...content.messages];
     messagesArray.reverse();
     const [users, setUsers] = useState(content.recipients);
     const [messages, setMessages] = useState(messagesArray);
     const [newMessage, setNewMessage] = useState('');
-    const { userToken, userId } = useContext(AuthContext);
+    const { apiUrl, userToken, userId } = useContext(AuthContext);
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -19,62 +20,49 @@ const ConvModal = ({ content, addGroup, closeModal }) => {
             let messagePayload;
             if (users.length > 1) {
                 messagePayload = {
-                    content: newMessage,
-                    recipientIds: users.map(user => user.userId)
+                    recipientUserIds: users.map(user => user.userId),
+                    messageContent: newMessage
                 };
             } else {
-
                 messagePayload = {
-                    content: newMessage,
-                    recipientIds: users[0].userId
+                    recipientUserIds: [users[0].userId],
+                    messageContent: newMessage
                 };
             }
             try {
                 if (!content.conversationId) {
-                    //const response = await fetch('/api/v1/conversations', {
-                    //    method: 'POST',
-                    //    headers: {
-                    //        'Content-Type': 'application/json',
-                    //        'Authorization': `Bearer ${userToken}`
-                    //    },
-                    //    body: JSON.stringify(messagePayload)
-                    //});
-                    //if (!response.ok) {
-                    //    throw new Error('Failed to create new conversation');
-                    //}
-                    //const result = await response.json();
-                    //content.conversationId = result.conversationId;
-                    const result = {
-                        messageId: 1,
-                        messageContent: messagePayload.content,
-                        messageDate: new Date().toISOString(),
-                        senderId: userId
+                    const response = await fetch(apiUrl + '/api/v1/conversations/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        body: JSON.stringify(messagePayload)
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to create new conversation');
                     }
-                    setMessages([result, ...messages]);
-                    if (users.length > 1) {
-                        addGroup({conversationId: 1, usernames: users.map(user => user.username)})
+                    const result = await response.json();
+                    setMessages([...result.messages, ...messages]);
+                    if (users.filter(user => user.userId !== userId).length > 1) {
+                        addGroup({conversationId: result.conversationId, recipients: users})
                     }
                 } else {
-                    //const response = await fetch(`/api/v1/conversations/${content.conversationId}`, {
-                    //    method: 'POST',
-                    //    headers: {
-                    //        'Content-Type': 'application/json',
-                    //        'Authorization': `Bearer ${userToken}`
-                    //    },
-                    //    body: JSON.stringify({
-                    //        messageContent: messagePayload.content,
-                    //    })
-                    //});
-                    //if (!response.ok) {
-                    //    throw new Error('Failed to send message');
-                    //}
-                    //const result = await response.json();
-                    const result = {
-                        messageId: 1,
-                        messageContent: messagePayload.content,
-                        messageDate: new Date().toISOString(),
-                        senderId: userId
+                    const response = await fetch(apiUrl + '/api/v1/conversations/sendMessage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        body: JSON.stringify({
+                            conversationId: content.conversationId,
+                            messageContent: messagePayload.messageContent
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
                     }
+                    const result = await response.json();
                     setMessages([result, ...messages]);
                 }
                 setNewMessage('');
@@ -114,7 +102,7 @@ const ConvModal = ({ content, addGroup, closeModal }) => {
                         {message.senderId === userId ? (
                             <div className='flex justify-end w-full'>
                                 <div className='p-4 rounded-3xl max-w-lg inline-block break-words text-white bg-lightRed'>
-                                    {message.messageContent}
+                                    {message.content}
                                 </div>
                             </div>
                         ) : (
@@ -127,7 +115,7 @@ const ConvModal = ({ content, addGroup, closeModal }) => {
                                         {getUsernameById(message.senderId)}
                                     </p>
                                     <div className='p-4 rounded-3xl max-w-lg inline-block break-words text-white bg-messageGrey'>
-                                        {message.messageContent}
+                                        {message.content}
                                     </div>
                                 </div>
                             </>

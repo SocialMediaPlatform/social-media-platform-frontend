@@ -6,115 +6,110 @@ import { AuthContext } from '../../AuthContext';
 
 const Conversations = () => {
     const { apiUrl, userToken, userId } = useContext(AuthContext); 
-    const [conversationContent, setConversationContent] = useState(null);
+    const [conversationContent, setConversationContent] = useState({ conversationId: null, messages: []});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [useEffectFlag, setUseEffectFlag] = useState(false);
     const [isComponentMounted, setIsComponentMounted] = useState(false);
     const [users, setUsers] = useState([]);
-    const [groups, setGroups] = useState([{ conversationId: 1, usernames: ['maksde25', 'lajsu69'] }, { conversationIdid: 2, usernames: ['babababa', 'mmemem'] }]);
+    const [groups, setGroups] = useState([]);
 
-    const fetchFollowedUsers = async () => {
-        try {
-            const response = await fetch(apiUrl + `/api/v1/userRelation/followed/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${userToken}`
-                },
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error(`${response.status}`);
-            }
-            const result = await response.json();
-            setUsers(result);
-        } catch (error) {
-            console.error('Error fetching followed users:', error);
-        }
-    };
 
-    const fetchGroups = async () => {
-        try {
-            const response = await fetch(`/api/v1/userRelation/followed/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${userToken}`
-                },
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error(`${response.status}`);
-            }
-            const result = await response.json();
-            setGroups(result);
-        } catch (error) {
-            console.error('Error fetching groups:', error);
-        }
-    };
 
     useEffect(() => {
         if (userToken) {
+            const fetchFollowedUsers = async () => {
+                try {
+                    const response = await fetch(apiUrl + `/api/v1/userRelation/followed/${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    setUsers(result);
+                } catch (error) {
+                    console.error('Error fetching followed users:', error);
+                }
+            };
             fetchFollowedUsers();
         }
-    }, [userId, userToken, users]);
+    }, [userId, userToken]);
 
 
     useEffect(() => {
         if (userToken) {
+            const fetchGroups = async () => {
+                try {
+                    const response = await fetch(apiUrl + '/api/v1/conversations/groupConversations', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    console.log(result);
+                    const groupRecipients = [];
+                    for (const group of result) {
+                        for (const username of group.usernames) {
+                            const userResponse = await fetch(apiUrl + `/api/v1/user/getUser/${username}`)
+                            if (!userResponse.ok) {
+                                throw new Error(`${userResponse.status}`);
+                            }
+                            const userResult = await userResponse.json();
+                            groupRecipients.push(userResult);
+                        }
+                    }
+                    console.log(groupRecipients);
+                    setGroups({conversationId: result.conversationId, recipients: groupRecipients});
+                } catch (error) {
+                    console.error('Error fetching groups:', error);
+                }
+            };
             fetchGroups();
         }
-    }, [userId, userToken, groups]);
+    }, [userId, userToken]);
 
     const handleUserSelect = (user) => {
         if (userToken){
             const fetchConversationContent = async () => {
                 try {
-                //    const response = await fetch(`/api/v1/conversations/${user.id}`, {
-                //        method: 'GET',
-                //        headers: {
-                //            'Authorization': `Bearer ${userToken}`
-                //        },
-                //        credentials: 'include'
-                //    });
-                //    if (!response.ok) {
-                //        throw new Error(`${response.status}`);
-                //    }
-                //    if (response.headers.get('Content-Length') === '0'){
-                //        setConversationContent(null);
-                //        return;
-                //    }
-                //    const result = await response.json();
-                    const result = {
-                        conversationId: 1, 
-                        recipients: [
-                            {
-                            userId: user.userId,
-                            username: user.username
-                            }
-                            ], 
-                        messages:[
-                            {
-                            messageId: 1, 
-                            messageContent: "kocham lajsa",
-                            messageDate: new Date().toISOString(),
-                            senderId: 1
-                            }]
-                    };
+                    const response = await fetch(apiUrl + `/api/v1/conversations/${user.userId}/conversation`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    result.recipients = [user];
                     setConversationContent(result);
                     setSelectedUser(user);
+                    setUseEffectFlag(!useEffectFlag);
                 } catch (error) {
                     console.error('Error fetching conversation content:', error);
                 }
             };
             fetchConversationContent();
-            setIsModalOpen(true);
         }
     };
     
     // Use effect to ensure synchronic user selection
     useEffect(() => {
         if (isComponentMounted) {
-            if (!conversationContent && selectedUser){
+            if (!conversationContent.conversationId && selectedUser){
                 setConversationContent({
                         conversationId: null, 
                         recipients: [
@@ -126,73 +121,43 @@ const Conversations = () => {
                         messages:[]
                 });
             }
+            setIsModalOpen(true);
         } else {
             setIsComponentMounted(true);
         }
-    }, [conversationContent]);
+    }, [useEffectFlag]);
 
     const handleGroupSelect = (group) => {
         if (userToken) {
-            //const fetchConversationContent = async () => {
-            //    try {
-            //        const response = await fetch(`/api/v1/conversations/${group.id}`, {
-            //            method: 'GET',
-            //            headers: {
-            //                'Authorization': `Bearer ${userToken}`
-            //            },
-            //            credentials: 'include'
-            //        });
-            //        if (!response.ok) {
-            //            throw new Error(`${response.status}`);
-            //        }
-            //        const result = await response.json();
-            //        setConversationContent(result);
-            //    } catch (error) {
-            //        console.error('Error fetching conversation content:', error);
-            //    }
-            //};
-            //fetchConversationContent();
-
-            setConversationContent({
-                    conversationId: 1, 
-                    recipients: [
-                            {
-                            userId: 1,
-                            username: 'maksde25'
-                            },
-                            {
-                            userId: 2,
-                            username: 'lajsu69'
-                            }
-                            ], 
-                    messages:[
-                            {
-                            messageId: 1, 
-                            messageContent: "kocham lajsa",
-                            messageDate: "23-06-2024",
-                            senderId: 1
-                            },
-                            {
-                            messageId: 2, 
-                            messageContent: "beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                            messageDate: "23-06-2024",
-                            senderId: 2
-                            }, 
-                            {
-                            messageId: 3, 
-                            messageContent: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                            messageDate: "23-06-2024",
-                            senderId: 0
-                            }] 
-            });
+            const fetchConversationContent = async () => {
+                try {
+                    const response = await fetch(apiUrl + `/api/v1/conversations/${group.conversationId}/messages`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        credentials: 'include'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`${response.status}`);
+                    }
+                    const result = await response.json();
+                    setConversationContent(
+                        {result}
+                    );
+                } catch (error) {
+                    console.error('Error fetching conversation content:', error);
+                }
+            };
+            fetchConversationContent();
             setIsModalOpen(true);
         }
     };
 
     const handleModalClose = () => {
-        setConversationContent(null);
-        setSelectedUser(null);
         setIsModalOpen(false);
+        setConversationContent({ conversationId: null, messages: []});
+        setSelectedUser(null);
     };
     
     const handleCreateGroupModalClose = () => {
@@ -207,10 +172,10 @@ const Conversations = () => {
         setGroups([...groups, group])
     } 
 
-    const openConvModalWithGroup = (users) => {
+    const openConvModalWithGroup = (groupUsers) => {
         setConversationContent({
             conversationId: null,
-            recipients: users,
+            recipients: groupUsers,
             messages: []
         });
         setIsModalOpen(true);
