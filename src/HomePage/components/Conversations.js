@@ -57,20 +57,10 @@ const Conversations = () => {
                         throw new Error(`${response.status}`);
                     }
                     const result = await response.json();
-                    console.log(result);
-                    const groupRecipients = [];
                     for (const group of result) {
-                        for (const username of group.usernames) {
-                            const userResponse = await fetch(apiUrl + `/api/v1/user/getUser/${username}`)
-                            if (!userResponse.ok) {
-                                throw new Error(`${userResponse.status}`);
-                            }
-                            const userResult = await userResponse.json();
-                            groupRecipients.push(userResult);
-                        }
+                        group.recipients = group.recipients.filter(recipient => parseInt(recipient.userId) !== parseInt(userId));
                     }
-                    console.log(groupRecipients);
-                    setGroups({conversationId: result.conversationId, recipients: groupRecipients});
+                    setGroups(result);
                 } catch (error) {
                     console.error('Error fetching groups:', error);
                 }
@@ -142,15 +132,16 @@ const Conversations = () => {
                         throw new Error(`${response.status}`);
                     }
                     const result = await response.json();
-                    setConversationContent(
-                        {result}
-                    );
+                    setConversationContent({
+                        conversationId: group.conversationId,
+                        recipients: group.recipients,
+                        messages: result});
+                    setUseEffectFlag(!useEffectFlag);
                 } catch (error) {
                     console.error('Error fetching conversation content:', error);
                 }
             };
             fetchConversationContent();
-            setIsModalOpen(true);
         }
     };
 

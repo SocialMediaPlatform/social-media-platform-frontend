@@ -13,6 +13,7 @@ const ConvModal = ({ content, addGroup, closeModal }) => {
     const [messages, setMessages] = useState(messagesArray);
     const [newMessage, setNewMessage] = useState('');
     const { apiUrl, userToken, userId } = useContext(AuthContext);
+    console.log(userId);
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -99,7 +100,7 @@ const ConvModal = ({ content, addGroup, closeModal }) => {
                 <div className='overflow-auto h-full my-8 px-6 flex flex-col-reverse'>
                     {messages.map((message, index) => (
                     <div key={index} className='flex flex-row items-center mt-4'>
-                        {message.senderId === userId ? (
+                        {parseInt(message.senderId) === parseInt(userId) ? (
                             <div className='flex justify-end w-full'>
                                 <div className='p-4 rounded-3xl max-w-lg inline-block break-words text-white bg-lightRed'>
                                     {message.content}
