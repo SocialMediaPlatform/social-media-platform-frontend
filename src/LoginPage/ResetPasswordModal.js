@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from "../AuthContext";
 
 const ResetPasswordModal = ({ closeModal }) => {
     const [email, setEmail] = useState("");
+    const { userToken, userId, apiUrl } = useContext(AuthContext);
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // implement logic for post request
+        try {
+            const response = await fetch(apiUrl + '/api/v1/auth/password-reset-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({email})
+            });
+            if (!response.ok) {
+                throw new Error(`${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error sending request:', error);
+        }
         alert(`Reset link sent to ${email}`);
         closeModal();
     };
