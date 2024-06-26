@@ -179,11 +179,11 @@ const Comment = ({ comment, fetchPost }) => {
                 <div className='flex'>
                     <div className='items-start p-1'>
                         <div className='rounded-full h-8 w-8 flex items-center justify-center bg-avatarGrey text-white'>
-                            {comment.commentAuthor[0].toUpperCase()}
+                            {comment.username[0].toUpperCase()}
                         </div>
                     </div>
                     <div className='ml-4 mt-1 flex-grow '>
-                        <p className='text-white text-xl'>{comment.commentAuthor}</p>
+                        <p className='text-white text-xl'>{comment.username}</p>
                         <p className='text-white break-all' style={{ whiteSpace: 'pre-wrap' }}>{comment.commentContents}</p>
                         <div className='flex mt-2 items-center text-xl text-textGrey'>
                             <div className='w-1/6'>
